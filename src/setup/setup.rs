@@ -7,13 +7,22 @@ use bevy::{
 pub struct GameSettings {
     resolution: (f32, f32),
     window_theme: Option<WindowTheme>,
+    margin_size: f32,
+    box_padding: f32,
 }
 
 impl GameSettings {
-    pub fn new(resolution: (f32, f32), window_theme: Option<WindowTheme>) -> Self {
+    pub fn new(
+        resolution: (f32, f32),
+        window_theme: Option<WindowTheme>,
+        margin_size: f32,
+        box_padding: f32,
+    ) -> Self {
         Self {
             resolution,
             window_theme,
+            margin_size,
+            box_padding,
         }
     }
 
@@ -35,15 +44,49 @@ impl GameSettings {
             primary_window: Some(Window {
                 resolution: self.get_resolution(),
                 window_theme: self.get_theme(),
+                resizable: false,
                 ..default()
             }),
             ..default()
         }
     }
 
-    pub fn setup_world(&self) -> impl Fn(Commands) {
-        move |mut commands: Commands| {
+    fn get_square_size(&self) -> (f32, f32) {
+        let x = (self.resolution.0 - (self.margin_size * 2.) - (self.box_padding / 2.)) / 3.;
+        let y = (self.resolution.1 - (self.margin_size * 2.) - (self.box_padding / 2.)) / 3.;
+
+        (x, y)
+    }
+
+    pub fn setup_world(&mut self) -> impl Fn(Commands) {
+        let square_size = self.get_square_size();
+        let res = self.resolution;
+
+        return move |mut commands: Commands| {
             commands.spawn(Camera2dBundle::default());
-        }
+
+            let mut spawn_block = |x: f32, y: f32| {
+                commands.spawn(SpriteBundle {
+                    sprite: Sprite {
+                        color: Color::rgb(0.25, 0.25, 0.75),
+                        custom_size: Some(Vec2::new(square_size.0, square_size.1)),
+                        ..default()
+                    },
+                    transform: Transform::from_translation(Vec3::new(x, y, 0.)),
+                    ..default()
+                });
+            };
+
+            // cols
+            for i in 1..=3 {
+                //rows
+                for j in 1..=3 {
+                    let x = (res.0 / 3.) * i as f32;
+                    let y = (res.1 / 3.) * j as f32;
+
+                    spawn_block(x, y);
+                }
+            }
+        };
     }
 }
