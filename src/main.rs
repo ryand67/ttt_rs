@@ -2,7 +2,10 @@ use bevy::prelude::*;
 use bevy::window::WindowTheme;
 
 use setup::*;
+use util::*;
+
 mod setup;
+mod util;
 
 const RESOLUTION: (f32, f32) = (900., 900.);
 const THEME: Option<WindowTheme> = Some(WindowTheme::Dark);
@@ -12,7 +15,7 @@ const BOX_PADDING: f32 = 30.;
 enum AppSate {
     MainMenu,
     Playing,
-    Settings,
+    EndGame,
 }
 
 fn main() {
@@ -21,5 +24,6 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(game_settings.create_window()))
         .add_systems(Startup, game_settings.setup_world())
+        .add_systems(Update, handle_click)
         .run();
 }

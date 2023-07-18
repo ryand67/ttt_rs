@@ -3,6 +3,12 @@ use bevy::{
     window::{WindowPlugin, WindowResolution, WindowTheme},
 };
 
+#[derive(Component)]
+struct Block {
+    x: f32,
+    y: f32,
+}
+
 #[derive(Default)]
 pub struct GameSettings {
     resolution: (f32, f32),
@@ -26,7 +32,11 @@ impl GameSettings {
         }
     }
 
-    pub fn get_resolution(&self) -> WindowResolution {
+    pub fn get_resolution(&self) -> (f32, f32) {
+        self.resolution
+    }
+
+    pub fn get_window_resolution(&self) -> WindowResolution {
         self.resolution.into()
     }
 
@@ -42,7 +52,7 @@ impl GameSettings {
     pub fn create_window(&self) -> WindowPlugin {
         WindowPlugin {
             primary_window: Some(Window {
-                resolution: self.get_resolution(),
+                resolution: self.get_window_resolution(),
                 window_theme: self.get_theme(),
                 resizable: false,
                 ..default()
@@ -60,30 +70,36 @@ impl GameSettings {
 
     pub fn setup_world(&mut self) -> impl Fn(Commands) {
         let square_size = self.get_square_size();
-        let res = self.resolution;
+        let res = self.get_resolution();
 
         return move |mut commands: Commands| {
             commands.spawn(Camera2dBundle::default());
 
             let mut spawn_block = |x: f32, y: f32| {
-                commands.spawn(SpriteBundle {
-                    sprite: Sprite {
-                        color: Color::rgb(0.25, 0.25, 0.75),
-                        custom_size: Some(Vec2::new(square_size.0, square_size.1)),
+                commands.spawn((
+                    Block { x, y },
+                    SpriteBundle {
+                        sprite: Sprite {
+                            color: Color::rgb(0.25, 0.25, 0.75),
+                            custom_size: Some(Vec2::new(square_size.0, square_size.1)),
+                            ..default()
+                        },
+                        transform: Transform::from_translation(Vec3::new(x, y, 0.)),
                         ..default()
                     },
-                    transform: Transform::from_translation(Vec3::new(x, y, 0.)),
-                    ..default()
-                });
+                ));
             };
 
             // cols
             for i in 1..=3 {
                 //rows
                 for j in 1..=3 {
-                    let x = (res.0 / 3.) * i as f32;
-                    let y = (res.1 / 3.) * j as f32;
+                    // 300, -150
+                    let x = ((res.0 / 3.) * i as f32) - (res.0 / 1.5);
+                    let y = ((res.1 / 3.) * j as f32) - (res.1 / 1.5);
+                    println!("{:?}, {:?}", x, y);
 
+                    spawn_block(x, y);
                     spawn_block(x, y);
                 }
             }
