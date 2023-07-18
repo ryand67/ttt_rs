@@ -3,10 +3,17 @@ use bevy::{
     window::{WindowPlugin, WindowResolution, WindowTheme},
 };
 
-#[derive(Component)]
-struct Block {
+#[derive(Component, Debug)]
+pub struct Block {
     x: f32,
     y: f32,
+    state: Option<BlockState>,
+}
+
+#[derive(Debug)]
+enum BlockState {
+    X,
+    O,
 }
 
 #[derive(Default)]
@@ -77,7 +84,6 @@ impl GameSettings {
 
             let mut spawn_block = |x: f32, y: f32| {
                 commands.spawn((
-                    Block { x, y },
                     SpriteBundle {
                         sprite: Sprite {
                             color: Color::rgb(0.25, 0.25, 0.75),
@@ -87,6 +93,7 @@ impl GameSettings {
                         transform: Transform::from_translation(Vec3::new(x, y, 0.)),
                         ..default()
                     },
+                    Block { x, y, state: None },
                 ));
             };
 
@@ -97,7 +104,6 @@ impl GameSettings {
                     // 300, -150
                     let x = ((res.0 / 3.) * i as f32) - (res.0 / 1.5);
                     let y = ((res.1 / 3.) * j as f32) - (res.1 / 1.5);
-                    println!("{:?}, {:?}", x, y);
 
                     spawn_block(x, y);
                     spawn_block(x, y);
