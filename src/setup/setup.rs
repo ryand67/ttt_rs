@@ -3,6 +3,8 @@ use bevy::{
     window::{WindowPlugin, WindowResolution, WindowTheme},
 };
 
+use crate::TurnState;
+
 #[derive(Component, Debug)]
 pub struct Block {
     x: f32,
@@ -75,9 +77,15 @@ impl GameSettings {
         (x, y)
     }
 
+    pub fn startup(&mut self) -> impl Fn(Commands) {
+        return move |mut commands: Commands| {
+            commands.spawn(Camera2dBundle::default());
+        };
+    }
+
     pub fn setup_menu(&mut self) -> impl Fn(Commands) {
         return move |mut commands: Commands| {
-            println!("here");
+            println!("menu");
         };
     }
 
@@ -86,13 +94,11 @@ impl GameSettings {
         let res = self.get_resolution();
 
         return move |mut commands: Commands| {
-            commands.spawn(Camera2dBundle::default());
-
             let mut spawn_block = |x: f32, y: f32| {
                 commands.spawn((
                     SpriteBundle {
                         sprite: Sprite {
-                            color: Color::rgb(0.25, 0.25, 0.75),
+                            color: Color::WHITE,
                             custom_size: Some(Vec2::new(square_size.0, square_size.1)),
                             ..default()
                         },

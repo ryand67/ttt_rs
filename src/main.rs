@@ -20,11 +20,15 @@ pub enum AppState {
     EndGame,
 }
 
-#[derive(States, Default, Debug, Clone, Copy, Eq, PartialEq, Hash)]
+#[derive(Debug)]
 pub enum TurnState {
-    #[default]
     P1,
     P2,
+}
+
+#[derive(Debug, Resource)]
+pub struct TurnTracker {
+    pub turn: TurnState,
 }
 
 fn main() {
@@ -33,9 +37,16 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(game_settings.create_window()))
         .add_state::<AppState>()
-        .add_state::<TurnState>()
+        .insert_resource(TurnTracker {
+            turn: TurnState::P1,
+        })
+        .add_systems(Startup, game_settings.startup())
         .add_systems(OnEnter(AppState::MainMenu), game_settings.setup_menu())
         .add_systems(OnEnter(AppState::Playing), game_settings.setup_board())
+        .add_systems(
+            Update,
+            handle_menu_click.run_if(in_state(AppState::MainMenu)),
+        )
         .add_systems(
             Update,
             handle_playing_click.run_if(in_state(AppState::Playing)),
