@@ -1,21 +1,14 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::prelude::*;
 
-use crate::setup::*;
-
-pub fn handle_click(
+use crate::{setup::*, AppState, TurnState};
+pub fn handle_playing_click(
     button: Res<Input<MouseButton>>,
-    mut query: Query<(
-        (&mut Sprite, With<Block>),
-        (&mut Window, With<PrimaryWindow>),
-    )>,
+    mut blocks: Query<(&Transform, &mut Sprite, With<Block>)>,
+    windows: Query<&Window>,
+    turn_state: ResMut<NextState<TurnState>>,
 ) {
     if button.just_pressed(MouseButton::Left) {
-        for i in query.iter_mut() {
-            println!("here");
-            // sprite.color = Color::WHITE;
-            // if let Some(pos) = window.cursor_position() {
-            //     println!("{:?}", pos);
-            // }
-        }
+        let curs_pos = windows.single().cursor_position().unwrap();
+        for sp in blocks.iter_mut() {}
     }
 }

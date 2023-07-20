@@ -75,7 +75,13 @@ impl GameSettings {
         (x, y)
     }
 
-    pub fn setup_world(&mut self) -> impl Fn(Commands) {
+    pub fn setup_menu(&mut self) -> impl Fn(Commands) {
+        return move |mut commands: Commands| {
+            println!("here");
+        };
+    }
+
+    pub fn setup_board(&mut self) -> impl Fn(Commands) {
         let square_size = self.get_square_size();
         let res = self.get_resolution();
 
