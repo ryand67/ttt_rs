@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{setup::*, AppState, TurnState, TurnTracker};
+use crate::{setup::*, *};
 
 pub fn handle_menu_click(
     button: Res<Input<MouseButton>>,
@@ -43,18 +43,18 @@ pub fn handle_playing_click(
 
         for mut sp in blocks.iter_mut() {
             if block_is_clicked(curs_pos, sp.0.translation, sp.1.custom_size) {
-                println!("{:?}", turn_state);
-                match turn_state.turn {
+                // sp.1.color = Color::RED;
+
+                println!("{:?}", turn_state.0);
+                match turn_state.0 {
                     TurnState::P1 => {
                         sp.1.color = Color::RED;
-                        println!("p1 click {:?}", sp);
-                        turn_state.turn = TurnState::P2;
+                        turn_state.0 = TurnState::P2;
                         return;
                     }
                     TurnState::P2 => {
                         sp.1.color = Color::BLUE;
-                        println!("p2 click {:?}", sp);
-                        turn_state.turn = TurnState::P1;
+                        turn_state.0 = TurnState::P1;
                         return;
                     }
                 }

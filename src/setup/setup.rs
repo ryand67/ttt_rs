@@ -3,8 +3,6 @@ use bevy::{
     window::{WindowPlugin, WindowResolution, WindowTheme},
 };
 
-use crate::TurnState;
-
 #[derive(Component, Debug)]
 pub struct Block {
     x: f32,

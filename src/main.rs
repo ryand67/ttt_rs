@@ -27,19 +27,15 @@ pub enum TurnState {
 }
 
 #[derive(Debug, Resource)]
-pub struct TurnTracker {
-    pub turn: TurnState,
-}
+pub struct TurnTracker(TurnState);
 
 fn main() {
     let mut game_settings = GameSettings::new(RESOLUTION, THEME, MARGIN_SIZE, BOX_PADDING);
 
     App::new()
+        .insert_resource(TurnTracker(TurnState::P1))
         .add_plugins(DefaultPlugins.set(game_settings.create_window()))
         .add_state::<AppState>()
-        .insert_resource(TurnTracker {
-            turn: TurnState::P1,
-        })
         .add_systems(Startup, game_settings.startup())
         .add_systems(OnEnter(AppState::MainMenu), game_settings.setup_menu())
         .add_systems(OnEnter(AppState::Playing), game_settings.setup_board())
